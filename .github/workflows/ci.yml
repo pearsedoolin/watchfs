@@ -1,0 +1,30 @@
+name: watchfs ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+    lint:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - uses: psf/black@stable
+          with:
+              options: "--check --verbose"
+              src: "./src"
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run:  cargo build
+    - name: Run tests
+      run: cargo test --verbose

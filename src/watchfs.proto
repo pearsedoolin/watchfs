@@ -1,0 +1,17 @@
+syntax = "proto2";
+package watchfs.buffers;
+
+
+message FileChange {
+  enum Action {
+    CREATE = 0;
+    DELETE = 1;
+    MODIFY = 2;
+  }
+  required string path = 1;
+  required Action action = 2;
+}
+
+message NotifyCommand {
+  required bool stop = 1;
+}

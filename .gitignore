@@ -1,0 +1,17 @@
+debug/
+target/
+dist/
+*.egg-info/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+python/watchfs/log
+.idea
+venv
+*_pb2.py
+*~

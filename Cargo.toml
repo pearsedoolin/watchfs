@@ -1,0 +1,36 @@
+[package]
+authors = ["pearse <pearsedoolin@gmail.com>"]
+name = "watchfs"
+version = "0.1.6"
+author = "Pearse Doolin"
+author_email = "pearsedoolin@gmail.com"
+description = "A python file system watcher that uses the rust notify crate"
+edition = "2018"
+readme = "README.md"
+license = "MIT"
+
+
+[package.metadata.maturin]
+maintainer = "Pearse Doolin"
+maintainer-email = "pearsedoolin@gmail.com"
+python-source = "python"
+project-url = { "Home Page" = "https://github.com/pearsedoolin/watchfs/", "Bug Tracker"= "https://github.com/pearsedoolin/watchfs/issues" }
+description-content-type = "text/markdown"
+classifiers =[
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    ]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "watchfs"
+crate-type = ["cdylib"]
+
+[dependencies.pyo3]
+version = "0.14.5"
+features = ["extension-module"]
+
+
+[dependencies]
