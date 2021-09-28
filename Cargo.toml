@@ -8,6 +8,8 @@ description = "A python file system watcher that uses the rust notify crate"
 edition = "2018"
 readme = "README.md"
 license = "MIT"
+build = "src/build.rs"
+
 
 
 [package.metadata.maturin]
@@ -34,3 +36,8 @@ features = ["extension-module"]
 
 
 [dependencies]
+prost="0.8"
+bytes="1.1.0"
+
+[build-dependencies]
+prost-build = { version ="0.8" }
