@@ -1,9 +1,17 @@
 use pyo3::prelude::*;
+use std::net::TcpStream;
+use std::{thread, time};
 
 /// Formats the sum of two numbers as string.
 #[pyfunction]
 fn watch_path(address: String) -> PyResult<String> {
+    let mut stream = TcpStream::connect(&address)?;
     let message = format!("opened {}", address);
+    let one_sec = time::Duration::from_secs(1);
+
+    loop {
+        thread::sleep(one_sec);
+    }
     Ok(message)
 }
 
