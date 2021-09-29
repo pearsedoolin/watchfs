@@ -1,3 +1,5 @@
 maturin publish called with -r https://test.pypi.org/legacy/
 uploading again caused an error because the files already exists.
 
+
+To build new rust module use maturin develop. Then delete the watchfs folder in site-packages.
