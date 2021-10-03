@@ -1,7 +1,7 @@
 use pyo3::prelude::*;
 use std::net::TcpStream;
 use std::{thread, time};
-use std::path::{Path, PathBuf};
+// use std::path::{Path, PathBuf};
 
 use prost::Message;
 
@@ -9,10 +9,9 @@ pub mod protobuf {
     include!(concat!(env!("OUT_DIR"), "\\watchfs.protobuf.rs"));
 }
 use protobuf::{file_change, FileChange, WatchfsCommand};
-use bytes::{Buf, BufMut, BytesMut, Bytes};
+use bytes::Bytes;
 
 use std::io::{Write, Read};
-use std::process::Command;
 
 fn u16_to_array_of_u8(n: u16) -> [u8; 2] {
     let b1 = ((n >> 8) & 0xff) as u8;
@@ -36,58 +35,44 @@ fn send_file_change(stream: &mut TcpStream, file_change: &FileChange) {
     stream.write(&bytes).unwrap();
 }
 
+
+fn check_for_stop(stream: &mut TcpStream) -> bool {
+    let mut stop = false;
+    let mut size_buffer= [0; 2];
+
+    if let Ok(bytes_read) =  stream.read(&mut size_buffer) {
+        match bytes_read {
+            2 => {
+                let mut message_buffer: Vec<u8> =vec![0, u8_array_to_u16(&size_buffer) as u8];
+                let _bytes_read = stream.read(&mut message_buffer).unwrap();
+                let mut bytes_array = Bytes::from(message_buffer);
+                let msg: WatchfsCommand = WatchfsCommand::decode(&mut bytes_array).unwrap();
+                stop = msg.stop;
+            },
+            _ => panic!("Expected 2 bytes but read {}", bytes_read),
+        }
+    }
+    stop
+}
+
 /// Formats the sum of two numbers as string.
 #[pyfunction]
 fn watch_path(address: String) -> PyResult<String> {
     let mut stream = TcpStream::connect(&address)?;
-    stream.set_nonblocking(true);
-    let message = format!("opened {}", address);
+    stream.set_nonblocking(true).unwrap();
     let one_sec = time::Duration::from_secs(1);
     let mut stop = false;
     let mut file_change = FileChange::default();
     file_change.action = file_change::Action::Create as i32;
     file_change.path = "/here/is/a/path".to_string();
 
-    let mut size_buffer= [0; 2];
-
-
     while stop == false {
         thread::sleep(one_sec);
         send_file_change(&mut stream, &file_change);
-        let read_result = stream.read(&mut size_buffer);
-        if let Ok(bytes_read) = read_result {
-            match bytes_read {
-                2 => {
-                    println!("size_buffer: {:?}", size_buffer);
-                    let message_len = u8_array_to_u16(&size_buffer);
-                    println!("message_len: {}", message_len);
-                    let mut message_buffer: Vec<u8> =vec![0, message_len as u8];
-                    println!("message_buffer: {:?}", message_buffer);
-
-                    // message_buffer.reserve(message_len as usize);
-                    let mut bytes_read = 0;
-                    while bytes_read != 2 {
-                        bytes_read = stream.read(&mut message_buffer).unwrap();
-                        println!("message_buffer is: {:?}", message_buffer);
-                        println!("bytes_read is: {:?}", bytes_read);
-                        thread::sleep(one_sec);
-                    }
-                    println!("b is: {:?}", message_buffer);
-                    let mut b = Bytes::from(message_buffer);
-
-                    let msg: WatchfsCommand = WatchfsCommand::decode(&mut b).unwrap();
-                    println!("msg: {:?}", msg);
-                    stop = msg.stop;
-                },
-                _ => panic!("read {} bytes. Expected 2", bytes_read),
-            }
-        }
-
+        stop = check_for_stop(&mut stream);
     }
-    Ok(message)
+    Ok("Rust finished successfully".to_string())
 }
-
-
 
 
 /// A Python module implemented in Rust. The name of this function must match
@@ -96,6 +81,5 @@ fn watch_path(address: String) -> PyResult<String> {
 #[pymodule]
 fn watchfs(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(watch_path, m)?)?;
-
     Ok(())
 }
