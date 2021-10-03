@@ -1,5 +1,7 @@
 maturin publish called with -r https://test.pypi.org/legacy/
 uploading again caused an error because the files already exists.
 
+To build python protobuf files  ..\protoc.exe -I=src --python_out=.\python\watchfs\ .\src\watchfs.proto
+(protoc.exe is in my /code folder)
 
 To build new rust module use maturin develop. Then delete the watchfs folder in site-packages.

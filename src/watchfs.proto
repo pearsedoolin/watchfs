@@ -12,6 +12,6 @@ message FileChange {
   required Action action = 2;
 }
 
-message NotifyCommand {
+message WatchfsCommand {
   required bool stop = 1;
 }

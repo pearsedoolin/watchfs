@@ -56,6 +56,16 @@ class watch:
                 except DecodeError:
                     print(f"Could not decode {message}")
 
+        # stop the listening function
+        command = watchfs_pb2.WatchfsCommand()
+        command.stop = True
+        command_str = command.SerializeToString()
+        command_len = len(command_str).to_bytes(2, byteorder="big")
+
+        self.writer.write(command_len)
+        self.writer.write(command_str)
+        await self.writer.drain()
+
         print(await asyncio.gather(self.rust_task))
 
         self.writer.close()
