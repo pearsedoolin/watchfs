@@ -38,6 +38,7 @@ features = ["extension-module"]
 [dependencies]
 prost="0.8"
 bytes="1.1.0"
+notify = "4.0.17"
 
 [build-dependencies]
 prost-build = { version ="0.8" }

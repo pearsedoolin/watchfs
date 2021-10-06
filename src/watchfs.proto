@@ -2,14 +2,36 @@ syntax = "proto2";
 package watchfs.protobuf;
 
 
-message FileChange {
+message DebouncedEvent {
   enum Action {
-    CREATE = 0;
-    DELETE = 1;
-    MODIFY = 2;
+    NoticeWrite = 0;
+    NoticeRemove = 1;
+    Create = 2;
+    Write = 3;
+    Chmod = 4;
+    Remove = 5;
+    Rename = 6;
+    Rescan = 7;
+    Error = 8;
   }
-  required string path = 1;
+  optional string path = 1;
   required Action action = 2;
+  optional string error_message = 3;
+}
+
+message RawEvent {
+    enum Op {
+        Chmod = 0;
+        Create = 1;
+        Remove = 2;
+        Rename = 3;
+        Write = 4;
+        Close_write = 5;
+        Error = 6;
+    }
+    optional string path = 1;
+    required Op op = 2;
+    optional uint32 cookie = 3;
 }
 
 message WatchfsCommand {

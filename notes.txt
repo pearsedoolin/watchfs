@@ -5,3 +5,6 @@ To build python protobuf files  ..\protoc.exe -I=src --python_out=.\python\watch
 (protoc.exe is in my /code folder)
 
 To build new rust module use maturin develop. Then delete the watchfs folder in site-packages.
+
+
+setting up act for running github actions locally: https://github.com/nektos/act
