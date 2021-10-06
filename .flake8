@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 120
+extend-ignore = E203
+exclude =
+    .git,
+    __pycache__,
+    .mypy_cache,
+    .pytest_cache,
+    venv,
+    .idea,
+    htmlcov,
+    src,
+    target,
+    .\python\watchfs\watchfs_pb2.py

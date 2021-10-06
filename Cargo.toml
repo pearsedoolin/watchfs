@@ -1,7 +1,7 @@
 [package]
 authors = ["pearse <pearsedoolin@gmail.com>"]
 name = "watchfs"
-version = "0.1.6"
+version = "0.1.8"
 author = "Pearse Doolin"
 author_email = "pearsedoolin@gmail.com"
 description = "A python file system watcher that uses the rust notify crate"
@@ -20,8 +20,23 @@ project-url = { "Home Page" = "https://github.com/pearsedoolin/watchfs/", "Bug T
 description-content-type = "text/markdown"
 classifiers =[
     "Programming Language :: Python :: 3",
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+
+    'Intended Audience :: Developers',
+    'Intended Audience :: Information Technology',
+    'Intended Audience :: System Administrators',
+
+    'Operating System :: POSIX :: Linux',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: MacOS',
+
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'Topic :: System :: Filesystems',
+
     "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
     ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -38,6 +53,7 @@ features = ["extension-module"]
 [dependencies]
 prost="0.8"
 bytes="1.1.0"
+notify = "4.0.17"
 
 [build-dependencies]
 prost-build = { version ="0.8" }
