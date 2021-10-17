@@ -23,6 +23,11 @@ jobs:
         with:
           python-version: '3.8'
 
+      - run: wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.1/protoc-3.18.1-linux-x86_64.zip
+      - run: find .
+      - run: unzip protoc-3.18.1-linux-x86_64.zip
+      - run: find .
+
       - run: pip install -r requirements-test.txt
       - run: pip install maturin
       - run: maturin build --release
