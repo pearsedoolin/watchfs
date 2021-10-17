@@ -4,6 +4,7 @@ use pyo3::exceptions::{PyFileNotFoundError, PyValueError};
 use std::net::TcpStream;
 use std::{thread, time};
 use std::sync::mpsc::channel;
+use std::path::{Path, PathBuf};
 use notify::{Watcher, RecursiveMode, RawEvent, DebouncedEvent, raw_watcher, watcher};
 
 // use std::path::{Path, PathBuf};
@@ -11,7 +12,7 @@ use notify::{Watcher, RecursiveMode, RawEvent, DebouncedEvent, raw_watcher, watc
 use prost::Message;
 
 pub mod protobuf {
-    include!(concat!(env!("OUT_DIR"), "\\watchfs.protobuf.rs"));
+    include!(concat!(env!("OUT_DIR"), "/watchfs.protobuf.rs"));
 }
 use bytes::Bytes;
 
