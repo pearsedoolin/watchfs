@@ -1,4 +1,4 @@
-pre-commit
+-r requirements.txt
 pytest
 pytest-asyncio
 black

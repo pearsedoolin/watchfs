@@ -10,81 +10,90 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  rust_check:
-    name: Rust check
+  test_python:
+    name: Python test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Setup python
+        uses: actions/setup-python@v1
+
         with:
-          profile: minimal
-          toolchain: stable
-          override: true
+          python-version: '3.8'
 
-      - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-
-
-  rust_test:
-    name: Rust test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-
-  rust_lint:
-    name: Rust lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-
-      - name: Run cargo clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
-#
-#  test:
+      - run: pip install -r requirements-test.txt
+      - run: pip install maturin
+      - run: maturin build --release
+#  rust_check:
+#    name: Rust check
 #    runs-on: ubuntu-latest
 #    steps:
-#    - uses: actions/checkout@v2
-#    - uses: actions/setup-python@v1
-#    - run: pip install -r tests/requirements.txt
-#    - run: pip install maturin
-#    - run: maturin develop
+#      - name: Checkout sources
+#        uses: actions/checkout@v2
 #
+#      - name: Install stable toolchain
+#        uses: actions-rs/toolchain@v1
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#          override: true
+#
+#      - name: Run cargo check
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: check
+#
+#
+#  rust_test:
+#    name: Rust test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout sources
+#        uses: actions/checkout@v2
+#
+#      - name: Install stable toolchain
+#        uses: actions-rs/toolchain@v1
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#          override: true
+#
+#      - name: Run cargo test
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: test
+#
+#  rust_lint:
+#    name: Rust lint
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout sources
+#        uses: actions/checkout@v2
+#
+#      - name: Install stable toolchain
+#        uses: actions-rs/toolchain@v1
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#          override: true
+#          components: rustfmt, clippy
+#
+#      - name: Run cargo fmt
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: fmt
+#          args: --all -- --check
+#
+#      - name: Run cargo clippy
+#        uses: actions-rs/cargo@v1
+#        with:
+#          command: clippy
+#          args: -- -D warnings
+#
+
+
 #
 #  lint:
 #    runs-on: ubuntu-latest
