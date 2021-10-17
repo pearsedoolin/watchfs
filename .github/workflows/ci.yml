@@ -19,7 +19,6 @@ jobs:
 
       - name: Setup python
         uses: actions/setup-python@v1
-
         with:
           python-version: '3.8'
 
@@ -31,7 +30,7 @@ jobs:
           protoc/bin/protoc -I=src --python_out=./python/watchfs/ ./src/watchfs.proto
 
       - name: Install python dependencies
-      - run: |
+        run: |
           pip install -r requirements-test.txt
           pip install maturin
 
