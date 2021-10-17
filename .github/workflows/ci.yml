@@ -26,6 +26,8 @@ jobs:
       - run: pip install -r requirements-test.txt
       - run: pip install maturin
       - run: maturin build --release
+        run: pip install --find-links=./target/wheels/ watchfs
+        run: pytest python/test
 #  rust_check:
 #    name: Rust check
 #    runs-on: ubuntu-latest
