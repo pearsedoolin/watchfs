@@ -46,11 +46,11 @@ jobs:
           coverage report --rcfile=./python/.coveragerc
           coverage xml --rcfile=./python/.coveragerc
 
-    - name: "Upload coverage to Codecov"
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: true
-#          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+#         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
 
 
 #  rust_check:
