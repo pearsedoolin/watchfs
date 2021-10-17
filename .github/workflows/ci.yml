@@ -23,16 +23,36 @@ jobs:
         with:
           python-version: '3.8'
 
-      - run: wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.1/protoc-3.18.1-linux-x86_64.zip
-      - run: mkdir protoc
-      - run: unzip protoc-3.18.1-linux-x86_64.zip -d protoc
-      - run: protoc/bin/protoc -I=src --python_out=./python/watchfs/ ./src/watchfs.proto
+      - name: Build proto python file
+        run: |
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.1/protoc-3.18.1-linux-x86_64.zip
+          mkdir protoc
+          unzip protoc-3.18.1-linux-x86_64.zip -d protoc
+          protoc/bin/protoc -I=src --python_out=./python/watchfs/ ./src/watchfs.proto
 
-      - run: pip install -r requirements-test.txt
-      - run: pip install maturin
-      - run: maturin build --release
-      - run: pip install --find-links=./target/wheels/ watchfs
-      - run: pytest python/test
+      - name: Install python dependencies
+      - run: |
+          pip install -r requirements-test.txt
+          pip install maturin
+
+      - name: Build and install rust watchfs
+        run: |
+          maturin build --release
+          pip install --find-links=./target/wheels/ watchfs
+
+      - name:  Generate coverage report
+        run: |
+          coverage run --rcfile=./python/.coveragerc -m pytest
+          coverage report --rcfile=./python/.coveragerc
+          coverage xml --rcfile=./python/.coveragerc
+
+    - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+#          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+
+
 #  rust_check:
 #    name: Rust check
 #    runs-on: ubuntu-latest

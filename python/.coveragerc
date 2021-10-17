@@ -1,0 +1,13 @@
+[report]
+precision=2
+fail_under = 1
+exclude_lines =
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+
+[run]
+source = python/watchfs
+branch = True
+omit=
+    */watchfs_pb2.py
+

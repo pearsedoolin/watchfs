@@ -11,7 +11,7 @@ from pathlib import Path
 async def run_watcher(path: Path, stop_event: asyncio.Event) -> DebouncedEvent:
     async for file_change in watch(path, stop=stop_event):
         print(file_change)
-        return file_change
+    return file_change
 
 
 async def wait_then_stop(stop_event: asyncio.Event):
@@ -44,6 +44,6 @@ async def test_async_create(tmp_path):
     assert file_change.error_message == ""
 
 
-if __name__ == "__main__":
-    # Using this instead of asyncio.run(start_tasks()) because of his bug: https://bugs.python.org/issue39232
-    asyncio.run(start_tasks())
+# if __name__ == "__main__":
+#     # Using this instead of asyncio.run(start_tasks()) because of his bug: https://bugs.python.org/issue39232
+#     asyncio.run(start_tasks())

@@ -1,6 +1,11 @@
 debug/
 target/
 dist/
+
+htmlcov/
+coverage.xml
+.coverage
+
 *.egg-info/
 Cargo.lock
 **/*.rs.bk
