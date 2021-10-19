@@ -50,8 +50,8 @@ jobs:
         run: |
           site_packages_dir=$(python3 -m site --user-site)
           coverage run --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs" -m pytest
-          coverage report --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs"
-          coverage xml --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs"
+          coverage report --rcfile=./python/.coveragerc
+          coverage xml --rcfile=./python/.coveragerc
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
