@@ -47,6 +47,7 @@ jobs:
 
 
       - run: pip show watchfs
+      - run: python3 -m site
 
       - name:  Generate coverage report
         run: |
