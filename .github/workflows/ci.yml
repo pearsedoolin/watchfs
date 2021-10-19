@@ -49,7 +49,7 @@ jobs:
       - name:  Generate coverage report
         run: |
           site_packages_dir=$(python3 -m site --user-site)
-          coverage run --rcfile=./python/.coveragerc -m pytest --source="${site_packages_dir}/watchfs"
+          coverage run --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs" -m pytest
           coverage report --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs"
           coverage xml --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs"
 
