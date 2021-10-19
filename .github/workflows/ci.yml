@@ -31,28 +31,36 @@ jobs:
 
       - run: which python
       - run: pip freeze
+      - run: find /opt/hostedtoolcache/Python/
+      - run: find .
 
-#      - name: Install python dependencies
-#        run: |
-#          pip install -r requirements-test.txt
-#          pip install maturin
-#
-#      - name: Build and install rust watchfs
-#        run: |
-#          maturin build --release
-#          pip install --find-links=./target/wheels/ watchfs
-#
-#      - name:  Generate coverage report
-#        run: |
-#          coverage run --rcfile=./python/.coveragerc -m pytest
-#          coverage report --rcfile=./python/.coveragerc
-#          coverage xml --rcfile=./python/.coveragerc
-#
-#      - name: Upload coverage to Codecov
-#        uses: codecov/codecov-action@v2
-#        with:
-#          fail_ci_if_error: true
-#         token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+      - name: Create and activate venv
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+
+
+      - name: Install python dependencies
+        run: |
+          pip install -r requirements-test.txt
+          pip install maturin
+
+      - name: Build and install rust watchfs
+        run: |
+          maturin build --release
+          pip install --find-links=./target/wheels/ watchfs
+
+      - name:  Generate coverage report
+        run: |
+          coverage run --rcfile=./python/.coveragerc -m pytest
+          coverage report --rcfile=./python/.coveragerc
+          coverage xml --rcfile=./python/.coveragerc
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
 
 
 #  rust_check:

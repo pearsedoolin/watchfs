@@ -6,7 +6,7 @@ exclude_lines =
     if TYPE_CHECKING:
 
 [run]
-source = python/watchfs
+source = venv/lib/site-packages/watchfs
 branch = True
 omit=
     */watchfs_pb2.py
