@@ -46,6 +46,8 @@ jobs:
           pip install --find-links=./target/wheels/ watchfs
 
 
+      - run: pip show watchfs
+
       - name:  Generate coverage report
         run: |
           site_packages_dir=$(python3 -m site --user-site)
