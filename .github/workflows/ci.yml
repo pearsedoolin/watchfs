@@ -29,10 +29,10 @@ jobs:
           unzip protoc-3.18.1-linux-x86_64.zip -d protoc
           protoc/bin/protoc -I=src --python_out=./python/watchfs/ ./src/watchfs.proto
 
-      - name: Create and activate venv
-        run: |
-          python -m venv venv
-          source venv/bin/activate
+#      - name: Create and activate venv
+#        run: |
+#          python -m venv venv
+#          source venv/bin/activate
 
 
       - name: Install python dependencies
@@ -45,13 +45,13 @@ jobs:
           maturin build --release
           pip install --find-links=./target/wheels/ watchfs
 
-      - run: find venv
 
       - name:  Generate coverage report
         run: |
-          coverage run --rcfile=./python/.coveragerc -m pytest
-          coverage report --rcfile=./python/.coveragerc
-          coverage xml --rcfile=./python/.coveragerc
+          site_packages_dir=$(python3 -m site --user-site)
+          coverage run --rcfile=./python/.coveragerc -m pytest --source="${site_packages_dir}/watchfs"
+          coverage report --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs"
+          coverage xml --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
