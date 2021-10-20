@@ -13,3 +13,11 @@ setting up act for running github actions locally: https://github.com/nektos/act
 TO DO
     write a rust test
     upload coverage to codecov
+
+
+    python coverage should be a seperate job running only on ubuntu latest.
+    same with python lint and rust lint.
+
+    Python tests and rust tests should run on all os's and all pythons
+
+    pip upload should run on all uploads

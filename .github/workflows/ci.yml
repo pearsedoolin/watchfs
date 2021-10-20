@@ -137,34 +137,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: coverage-cargo-${{ hashFiles('**/Cargo.toml') }}
-        continue-on-error: true
-      - name: install cargo-llvm-cov
-        run: |
-          wget https://github.com/taiki-e/cargo-llvm-cov/releases/download/v${CARGO_LLVM_COV_VERSION}/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz -qO- | tar -xzvf -
-          mv cargo-llvm-cov ~/.cargo/bin
-        env:
-          CARGO_LLVM_COV_VERSION: 0.1.5
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
-          profile: minimal
-          components: llvm-tools-preview
-      - run: |
-          cargo llvm-cov clean --workspace
-          cargo llvm-cov --package $ALL_PACKAGES --no-report
-          cargo llvm-cov --package $ALL_PACKAGES --no-report --features abi3
-          cargo llvm-cov --package $ALL_PACKAGES --no-report --features macros num-bigint num-complex hashbrown indexmap serde multiple-pymethods eyre anyhow
-          cargo llvm-cov --package $ALL_PACKAGES --no-run --lcov --output-path coverage.lcov
-        env:
-          ALL_PACKAGES: pyo3 pyo3-build-config pyo3-macros-backend pyo3-macros
-      - uses: codecov/codecov-action@v1
-        with:
-          file: coverage.lcov
+      - name: Install Rust
+          run: rustup toolchain install nightly --component llvm-tools-preview
+            - name: Install cargo-llvm-cov
+              run: curl -LsSf https://github.com/taiki-e/cargo-llvm-cov/releases/latest/download/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz | tar xzf - -C ~/.cargo/bin
+            - name: Generate code coverage
+              run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+            - name: Upload coverage to Codecov
+              uses: codecov/codecov-action@v1
+              with:
+                files: lcov.info
+                fail_ci_if_error: true
