@@ -29,12 +29,6 @@ jobs:
           unzip protoc-3.18.1-linux-x86_64.zip -d protoc
           protoc/bin/protoc -I=src --python_out=./python/watchfs/ ./src/watchfs.proto
 
-#      - name: Create and activate venv
-#        run: |
-#          python -m venv venv
-#          source venv/bin/activate
-
-
       - name: Install python dependencies
         run: |
           pip install -r requirements-test.txt
@@ -46,10 +40,7 @@ jobs:
           pip install --find-links=./target/wheels/ watchfs
 
 
-      - run: pip show watchfs
-      - run: python -m site
-
-      - name:  Generate coverage report
+      - name:  Generate python coverage report
         run: |
           site_packages_dir=$(pip show watchfs | grep "Location" | sed 's/Location: //')
           echo "site packages dir: ${site_packages_dir}"
@@ -57,7 +48,7 @@ jobs:
           coverage report --rcfile=./python/.coveragerc
           coverage xml --rcfile=./python/.coveragerc
 
-      - name: Upload coverage to Codecov
+      - name: Upload python coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: true
@@ -141,3 +132,39 @@ jobs:
 #        with:
 #          options: "--check --verbose"
 #          src: "./src"
+
+  rustcoverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: coverage-cargo-${{ hashFiles('**/Cargo.toml') }}
+        continue-on-error: true
+      - name: install cargo-llvm-cov
+        run: |
+          wget https://github.com/taiki-e/cargo-llvm-cov/releases/download/v${CARGO_LLVM_COV_VERSION}/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz -qO- | tar -xzvf -
+          mv cargo-llvm-cov ~/.cargo/bin
+        env:
+          CARGO_LLVM_COV_VERSION: 0.1.5
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          profile: minimal
+          components: llvm-tools-preview
+      - run: |
+          cargo llvm-cov clean --workspace
+          cargo llvm-cov --package $ALL_PACKAGES --no-report
+          cargo llvm-cov --package $ALL_PACKAGES --no-report --features abi3
+          cargo llvm-cov --package $ALL_PACKAGES --no-report --features macros num-bigint num-complex hashbrown indexmap serde multiple-pymethods eyre anyhow
+          cargo llvm-cov --package $ALL_PACKAGES --no-run --lcov --output-path coverage.lcov
+        env:
+          ALL_PACKAGES: pyo3 pyo3-build-config pyo3-macros-backend pyo3-macros
+      - uses: codecov/codecov-action@v1
+        with:
+          file: coverage.lcov

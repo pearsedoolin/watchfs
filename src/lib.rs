@@ -143,6 +143,16 @@ fn watch_path(address: String, path: String, recursive: bool) -> PyResult<String
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+
+    #[test]
+    fn test_u16_to_array_of_u8() {
+        assert_eq!([0, 5], u16_to_array_of_u8(5));
+    }
+}
 /// A Python module implemented in Rust. The name of this function must match
 /// the `lib.name` setting in the `Cargo.toml`, else Python will not be able to
 /// import the module.
@@ -152,3 +162,4 @@ fn watchfs(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(watch_path, m)?)?;
     Ok(())
 }
+
