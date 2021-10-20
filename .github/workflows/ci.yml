@@ -138,6 +138,9 @@ jobs:
         run: |
           curl -LsSf https://github.com/taiki-e/cargo-llvm-cov/releases/latest/download/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz | tar xzf - -C ~/.cargo/bin
           cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+
+      - name: Upload rust coverage
+        if: ${{matrix.platform.os}} == 'ubuntu-latest' && ${{matrix.python-version}} == 3.8 && ${{ matrix.rust }} == nightly
         uses: codecov/codecov-action@v1
         with:
           files: lcov.info
@@ -162,7 +165,7 @@ jobs:
       - name: Run python tests
         run: pytest
 
-      - name:  Run python coverage
+      - name: Run python coverage
         if: ${{matrix.platform.os}} == 'ubuntu-latest' && ${{matrix.python-version}} == 3.8 && ${{ matrix.rust }} == nightly
         run: |
           site_packages_dir=$(pip show watchfs | grep "Location" | sed 's/Location: //')
@@ -170,6 +173,9 @@ jobs:
           coverage run --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs" -m pytest
           coverage report --rcfile=./python/.coveragerc
           coverage xml --rcfile=./python/.coveragerc
+
+      - name: Upload python coverage
+        if: ${{matrix.platform.os}} == 'ubuntu-latest' && ${{matrix.python-version}} == 3.8 && ${{ matrix.rust }} == nightly
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: true
