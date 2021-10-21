@@ -20,3 +20,5 @@ python/watchfs/log
 venv
 *_pb2.py
 *~
+build_scripts/protoc
+build_scripts/protoc.zip

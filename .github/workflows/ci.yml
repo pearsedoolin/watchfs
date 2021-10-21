@@ -131,11 +131,8 @@ jobs:
           files: lcov.info
 
       - name: Build proto python file
-        run: |
-          wget "https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.platform.protoc }}"
-          mkdir protoc
-          tar -xvf ${{ matrix.platform.protoc }} -C protoc
-          protoc/bin/protoc -I=src --python_out=./python/watchfs/ ./src/watchfs.proto
+        run: python build_scripts/run_protoc.py --url="https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.platform.protoc }}"
+
 
       - name: Install python dependencies
         run: |
