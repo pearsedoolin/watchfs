@@ -132,10 +132,9 @@ jobs:
 
       - name: Build proto python file
         run: |
-          /protoc-3.19.0-win64.zip
-          wget "https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.protoc }}"
+          wget "https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.platform.protoc }}"
           mkdir protoc
-          tar -xvf ${{ matrix.protoc }} -C protoc
+          tar -xvf ${{ matrix.platform.protoc }} -C protoc
           protoc/bin/protoc -I=src --python_out=./python/watchfs/ ./src/watchfs.proto
 
       - name: Install python dependencies
