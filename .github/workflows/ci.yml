@@ -65,28 +65,33 @@ jobs:
       fail-fast: false # If one platform fails, allow the rest to keep testing.
       matrix:
         rust: [ "stable", "nightly" ]
-        python-version: [ "3.6", "3.7", "3.8", "3.9", "3.10"]
+        # 3.6 does not allow asyncio.createtask
+        python-version: [ "3.7", "3.8", "3.9", "3.10"]
         platform:
           [
             {
               os: "macos-latest",
               python-architecture: "x64",
               rust-target: "x86_64-apple-darwin",
+              protoc: "protoc-3.19.0-osx-x86_64.zip"
             },
             {
               os: "ubuntu-latest",
               python-architecture: "x64",
               rust-target: "x86_64-unknown-linux-gnu",
+              protoc: "protoc-3.19.0-linux-x86_64.zip"
             },
             {
               os: "windows-latest",
               python-architecture: "x64",
               rust-target: "x86_64-pc-windows-msvc",
+              protoc: "protoc-3.19.0-win64.zip"
             },
             {
               os: "windows-latest",
               python-architecture: "x86",
               rust-target: "i686-pc-windows-msvc",
+              protoc: "protoc-3.19.0-win32.zip"
             },
           ]
     steps:
@@ -94,7 +99,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{matrix.python-version}}
           architecture:  ${{ matrix.platform.python-architecture }}
@@ -127,9 +132,10 @@ jobs:
 
       - name: Build proto python file
         run: |
-          wget https://github.com/protocolbuffers/protobuf/releases/download/v3.18.1/protoc-3.18.1-linux-x86_64.zip
+          /protoc-3.19.0-win64.zip
+          wget "https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${matrix.protoc}"
           mkdir protoc
-          unzip protoc-3.18.1-linux-x86_64.zip -d protoc
+          tar -xvf ${matrix.protoc} -C protoc
           protoc/bin/protoc -I=src --python_out=./python/watchfs/ ./src/watchfs.proto
 
       - name: Install python dependencies
