@@ -53,16 +53,16 @@ def run_protoc(url):
         os.chmod(executable, executable.stat().st_mode | stat.S_IEXEC)
         print(f"changing mode of {executable}")
 
-    os.chdir(bin_path)
     print(f"now in bin path: {os.getcwd()}")
 
     cmd = subprocess.Popen(
         [
-            "protoc",
+            str(bin_path / "protoc"),
             f"-I={str(this_dir.parent / 'src')}",
             f"--python_out={str(this_dir.parent / 'python' / 'watchfs')}/",
             str(this_dir.parent / "src" / "watchfs.proto"),
         ],
+        cwd=bin_path,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
