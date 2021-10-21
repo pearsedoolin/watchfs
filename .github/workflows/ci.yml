@@ -114,13 +114,13 @@ jobs:
           command: test
 
       - name: Run rust coverage
-        if: matrix.platform.os == "ubuntu-latest" && matrix.python-version == "3.8" && matrix.rust == "nightly"
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
         run: |
           curl -LsSf https://github.com/taiki-e/cargo-llvm-cov/releases/latest/download/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz | tar xzf - -C ~/.cargo/bin
           cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
 
       - name: Upload rust coverage
-        if: matrix.platform.os == "ubuntu-latest" && matrix.python-version == "3.8" && matrix.rust == "nightly"
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
         uses: codecov/codecov-action@v1
         with:
           files: lcov.info
@@ -146,7 +146,7 @@ jobs:
         run: pytest
 
       - name: Run python coverage
-        if: matrix.platform.os == "ubuntu-latest" && matrix.python-version == "3.8" && matrix.rust == "nightly"
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
         run: |
           site_packages_dir=$(pip show watchfs | grep "Location" | sed 's/Location: //')
           echo "site packages dir: ${site_packages_dir}"
@@ -155,7 +155,7 @@ jobs:
           coverage xml --rcfile=./python/.coveragerc
 
       - name: Upload python coverage
-        if: matrix.platform.os == "ubuntu-latest" && matrix.python-version == "3.8" && matrix.rust == "nightly"
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: true
