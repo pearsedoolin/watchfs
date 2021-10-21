@@ -104,31 +104,31 @@ jobs:
           python-version: ${{ matrix.python-version }}
           architecture:  ${{ matrix.platform.python-architecture }}
 
-#      - name: Install Rust toolchain
-#        uses: actions-rs/toolchain@v1
-#        with:
-#          toolchain: ${{ matrix.rust }}
-#          target: ${{ matrix.platform.rust-target }}
-#          profile: minimal
-#          default: true
-#          components: rust-src, llvm-tools-preview
-#
-#      - name: Run cargo test
-#        uses: actions-rs/cargo@v1
-#        with:
-#          command: test
-#
-#      - name: Run rust coverage
-#        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
-#        run: |
-#          curl -LsSf https://github.com/taiki-e/cargo-llvm-cov/releases/latest/download/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz | tar xzf - -C ~/.cargo/bin
-#          cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
-#
-#      - name: Upload rust coverage
-#        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
-#        uses: codecov/codecov-action@v1
-#        with:
-#          files: lcov.info
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.platform.rust-target }}
+          profile: minimal
+          default: true
+          components: rust-src, llvm-tools-preview
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+      - name: Run rust coverage
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
+        run: |
+          curl -LsSf https://github.com/taiki-e/cargo-llvm-cov/releases/latest/download/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz | tar xzf - -C ~/.cargo/bin
+          cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
+
+      - name: Upload rust coverage
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
+        uses: codecov/codecov-action@v1
+        with:
+          files: lcov.info
 
       - name: Install python dependencies
         run: |
@@ -140,26 +140,26 @@ jobs:
         run: python build_scripts/run_protoc.py --url="https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.platform.protoc }}"
 
 
-#      - name: Maturin build and pip install
-#        run: |
-#          maturin build --release
-#          pip install --find-links=./target/wheels/ watchfs
-#
-#      - name: Run python tests
-#        run: pytest
-#
-#      - name: Run python coverage
-#        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
-#        run: |
-#          site_packages_dir=$(pip show watchfs | grep "Location" | sed 's/Location: //')
-#          echo "site packages dir: ${site_packages_dir}"
-#          coverage run --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs" -m pytest
-#          coverage report --rcfile=./python/.coveragerc
-#          coverage xml --rcfile=./python/.coveragerc
-#
-#      - name: Upload python coverage
-#        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
-#        uses: codecov/codecov-action@v2
-#        with:
-#          fail_ci_if_error: true
+      - name: Maturin build and pip install
+        run: |
+          maturin build --release
+          pip install --find-links=./target/wheels/ watchfs
+
+      - name: Run python tests
+        run: pytest
+
+      - name: Run python coverage
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
+        run: |
+          site_packages_dir=$(pip show watchfs | grep "Location" | sed 's/Location: //')
+          echo "site packages dir: ${site_packages_dir}"
+          coverage run --rcfile=./python/.coveragerc --source="${site_packages_dir}/watchfs" -m pytest
+          coverage report --rcfile=./python/.coveragerc
+          coverage xml --rcfile=./python/.coveragerc
+
+      - name: Upload python coverage
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
 
