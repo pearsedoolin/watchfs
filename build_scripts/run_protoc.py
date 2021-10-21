@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 import subprocess
 import os
+import stat
 
 
 @click.command()
@@ -47,6 +48,10 @@ def run_protoc(url):
         str(this_dir.parent / "src" / "watchfs.proto"),
     ]
     print(f"args are: {args}")
+
+    for executable in bin_path.glob("protoc*"):
+        os.chmod(executable, executable.stat().st_mode | stat.S_IEXEC)
+        print(f"changing mode of {executable}")
 
     os.chdir(bin_path)
     print(f"now in bin path: {os.getcwd()}")
