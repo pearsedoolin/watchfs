@@ -56,16 +56,19 @@ def run_protoc(url):
     os.chdir(bin_path)
     print(f"now in bin path: {os.getcwd()}")
 
-    subprocess.run(
+    cmd = subprocess.Popen(
         [
             "protoc",
             f"-I={str(this_dir.parent / 'src')}",
             f"--python_out={str(this_dir.parent / 'python' / 'watchfs')}/",
             str(this_dir.parent / "src" / "watchfs.proto"),
         ],
-        check=True,
         stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
     )
+
+    cmd.communicate()
+    print("done")
 
 
 if __name__ == "__main__":
