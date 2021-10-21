@@ -9,7 +9,7 @@ import os
 @click.command()
 @click.option("--url", prompt="Download url", help="The url to download from.")
 def run_protoc(url):
-    this_dir = Path(__file__).parent
+    this_dir = Path(__file__).parent.resolve()
     os.chdir(this_dir)
 
     # Download
