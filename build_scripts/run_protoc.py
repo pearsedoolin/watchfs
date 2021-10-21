@@ -25,7 +25,7 @@ def run_protoc(url):
     print(f"protoc_zip exists: {protoc_zip.exists()}")
 
     # Extract
-    extract_dir = Path("protoc")
+    extract_dir = Path("protoc").resolve()
     extract_dir.mkdir()
     shutil.unpack_archive(protoc_zip, extract_dir=extract_dir)
 
@@ -49,6 +49,8 @@ def run_protoc(url):
     print(f"args are: {args}")
 
     os.chdir(bin_path)
+    print(f"now in bin path: {os.getcwd()}")
+
     subprocess.run(
         [
             "protoc",
