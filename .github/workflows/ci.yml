@@ -10,53 +10,53 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  rustfmt:
-    name: Rustfmt
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          components: rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-
-  clippy:
-    name: Clippy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-          components: clippy
-      - uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: -- -D warnings
-
-  black:
-    name: Black
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: psf/black@stable
-        with:
-          options: "--check --verbose"
-          src: "./python/watchfs"
-
-  flake8-lint:
-    runs-on: ubuntu-latest
-    name: Lint
-    steps:
-      - uses: actions/checkout@v2
-      - name: flake8 Lint
-        uses: py-actions/flake8@v1
+#  rustfmt:
+#    name: Rustfmt
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions-rs/toolchain@v1
+#        with:
+#          toolchain: stable
+#          override: true
+#          components: rustfmt
+#      - uses: actions-rs/cargo@v1
+#        with:
+#          command: fmt
+#          args: --all -- --check
+#
+#  clippy:
+#    name: Clippy
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions-rs/toolchain@v1
+#        with:
+#          toolchain: stable
+#          override: true
+#          components: clippy
+#      - uses: actions-rs/clippy-check@v1
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          args: -- -D warnings
+#
+#  black:
+#    name: Black
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: psf/black@stable
+#        with:
+#          options: "--check --verbose"
+#          src: "./python/watchfs"
+#
+#  flake8-lint:
+#    runs-on: ubuntu-latest
+#    name: Lint
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: flake8 Lint
+#        uses: py-actions/flake8@v1
 
   build_test_deploy:
     name: python${{ matrix.python-version }}-${{ matrix.platform.python-architecture }} ${{ matrix.platform.os }}
@@ -101,7 +101,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{matrix.python-version}}
+          python-version: ${{ matrix.python-version }}
           architecture:  ${{ matrix.platform.python-architecture }}
 
       - name: Install Rust toolchain
@@ -133,9 +133,9 @@ jobs:
       - name: Build proto python file
         run: |
           /protoc-3.19.0-win64.zip
-          wget "https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${matrix.protoc}"
+          wget "https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.protoc }}"
           mkdir protoc
-          tar -xvf ${matrix.protoc} -C protoc
+          tar -xvf ${{ matrix.protoc }} -C protoc
           protoc/bin/protoc -I=src --python_out=./python/watchfs/ ./src/watchfs.proto
 
       - name: Install python dependencies
