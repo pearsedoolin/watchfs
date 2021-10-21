@@ -130,15 +130,15 @@ jobs:
         with:
           files: lcov.info
 
-      - name: Build proto python file
-        run: python build_scripts/run_protoc.py --url="https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.platform.protoc }}"
-
-
       - name: Install python dependencies
         run: |
           pip install -r requirements-test.txt
           pip install -r requirements-build.txt
           pip install maturin
+
+      - name: Build proto python file
+        run: python build_scripts/run_protoc.py --url="https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.platform.protoc }}"
+
 
       - name: Maturin build and pip install
         run: |
