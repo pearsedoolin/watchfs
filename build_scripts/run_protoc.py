@@ -26,8 +26,8 @@ def run_protoc(url):
 
     # Run
     bin_path = extract_dir / "bin"
-    # for executable in bin_path.glob("protoc*"):
-    #     os.chmod(executable, executable.stat().st_mode | stat.S_IEXEC)
+    for executable in bin_path.glob("protoc*"):
+        os.chmod(executable, executable.stat().st_mode | stat.S_IEXEC)
     proc = subprocess.Popen(
         [
             str(bin_path / "protoc"),
