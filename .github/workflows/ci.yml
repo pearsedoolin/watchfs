@@ -81,18 +81,18 @@ jobs:
               rust-target: "x86_64-unknown-linux-gnu",
               protoc: "protoc-3.19.0-linux-x86_64.zip"
             },
-#            {
-#              os: "windows-latest",
-#              python-architecture: "x64",
-#              rust-target: "x86_64-pc-windows-msvc",
-#              protoc: "protoc-3.19.0-win64.zip"
-#            },
-#            {
-#              os: "windows-latest",
-#              python-architecture: "x86",
-#              rust-target: "i686-pc-windows-msvc",
-#              protoc: "protoc-3.19.0-win32.zip"
-#            },
+            {
+              os: "windows-latest",
+              python-architecture: "x64",
+              rust-target: "x86_64-pc-windows-msvc",
+              protoc: "protoc-3.19.0-win64.zip"
+            },
+            {
+              os: "windows-latest",
+              python-architecture: "x86",
+              rust-target: "i686-pc-windows-msvc",
+              protoc: "protoc-3.19.0-win32.zip"
+            },
           ]
     steps:
       - name: Checkout sources
