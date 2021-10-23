@@ -61,7 +61,7 @@ jobs:
   build_test_deploy:
     name: ${{ matrix.platform.os }}-${{ matrix.platform.python-architecture }}-python${{ matrix.python.version }}
     runs-on: ${{ matrix.platform.os }}
-    continue-on-error: ${{ matrix.platform.experimental }} || ${{ matrix.python.experimental }}
+    continue-on-error: ${{ ${{ matrix.platform.experimental }} || ${{ matrix.python.experimental }} }}
 
     strategy:
       fail-fast: false # If one platform fails, allow the rest to keep testing.
