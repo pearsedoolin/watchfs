@@ -87,10 +87,10 @@ jobs:
               version: "3.10",
               experimental: false
             },
-            {
-              version: "3.11-dev",
-              experimental: true
-            },
+#            {
+#              version: "3.11-dev",
+#              experimental: true
+#            },
           ]
 
         platform:
@@ -191,9 +191,15 @@ jobs:
       - name: Build proto python file
         run: python build_scripts/run_protoc.py --url="https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.platform.protoc }}"
 
+
+      - name: Get python path
+        id: python-path
+        run: |
+          echo "::set-output name=path::$(python -c 'import sys;print(sys.executable)')"
+
       - name: Maturin build and pip install
         run: |
-          maturin build --release
+          maturin build --release --interpreter ${{ steps.python-path.outputs.path}}
           pip install --find-links=./target/wheels/ watchfs
 
       - name: Run python tests
