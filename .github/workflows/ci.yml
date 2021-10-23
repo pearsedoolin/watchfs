@@ -126,7 +126,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: cargo-${{ matrix.python-version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/Cargo.lock') }}
+          key: cargo-${{ matrix.python-version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/Cargo.toml') }}
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -189,8 +189,14 @@ jobs:
         run: twine check target/wheels/*
 
       - name: Upload to pypi
-        run: twine upload  -r testpypi target/wheels/* --verbose
+        run: twine upload  -r testpypi target/wheels/*.whl --verbose
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
 
+    env:
+      CARGO_TERM_VERBOSE: true
+      CARGO_BUILD_TARGET: ${{ matrix.platform.rust-target }}
+      RUST_BACKTRACE: 1
+      RUSTFLAGS: "-D warnings"
+      RUSTDOCFLAGS: "-D warnings"

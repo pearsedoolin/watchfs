@@ -1,7 +1,7 @@
 [package]
 authors = ["pearse <pearsedoolin@gmail.com>"]
 name = "watchfs"
-version = "0.1.6"
+version = "0.1.7"
 author = "Pearse Doolin"
 author_email = "pearsedoolin@gmail.com"
 description = "A python file system watcher that uses the rust notify crate"
@@ -20,7 +20,6 @@ project-url = { "Home Page" = "https://github.com/pearsedoolin/watchfs/", "Bug T
 description-content-type = "text/markdown"
 classifiers =[
     "Programming Language :: Python :: 3",
-    'Programming Language :: Python :: 3 :: Only',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
