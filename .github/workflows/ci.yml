@@ -98,16 +98,11 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
 
-      - name: Store rust cache
-        uses: actions/cache@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: cargo-${{ matrix.python-version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/Cargo.lock') }}
+          python-version: ${{ matrix.python-version }}
+          architecture:  ${{ matrix.platform.python-architecture }}
 
       - name: Get pip cache dir
         id: pip-cache
@@ -122,11 +117,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Setup python
-        uses: actions/setup-python@v2
+      - name: Rust cache
+        uses: actions/cache@v2
         with:
-          python-version: ${{ matrix.python-version }}
-          architecture:  ${{ matrix.platform.python-architecture }}
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: cargo-${{ matrix.python-version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -184,4 +184,13 @@ jobs:
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: true
+
+      - name: Run twine check
+        run: twine check target/wheels/*
+
+      - name: Upload to pypi
+        run: twine upload  -r testpypi target/wheels/* --verbose
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
 
