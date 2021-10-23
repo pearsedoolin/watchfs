@@ -95,6 +95,8 @@ jobs:
             },
           ]
     steps:
+      - run: find .
+
       - name: Checkout sources
         uses: actions/checkout@v2
 
@@ -189,7 +191,7 @@ jobs:
         run: twine check target/wheels/*
 
       - name: Upload to pypi
-        run: twine upload  -r testpypi target/wheels/*.whl --verbose
+        run: twine upload  -r testpypi target/wheels/*.whl --verbose --skip-existing
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
