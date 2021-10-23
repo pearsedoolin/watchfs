@@ -1,4 +1,4 @@
-name: watchfs ci
+name: ci
 
 on:
   push:
@@ -97,6 +97,17 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
+
+      - name: Store rust cache
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: cargo-${{ matrix.python-version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Setup python
         uses: actions/setup-python@v2
