@@ -59,63 +59,92 @@ jobs:
 #        uses: py-actions/flake8@v1
 
   build_test_deploy:
-    name: python${{ matrix.python-version }}-${{ matrix.platform.python-architecture }} ${{ matrix.platform.os }}
+    name: python${{ matrix.python.version }}-${{ matrix.platform.python-architecture }} ${{ matrix.platform.os }}
     runs-on: ${{ matrix.platform.os }}
     strategy:
       fail-fast: false # If one platform fails, allow the rest to keep testing.
+      continue-on-error: ${{ matrix.platform.experimental }} || ${{ matrix.python.experimental }}
+
       matrix:
         rust: [ "stable", "nightly" ]
         # 3.6 does not allow asyncio.createtask
-        python-version: [ "3.7", "3.8", "3.9", "3.10"]
+        python:
+          [
+            {
+              version: "3.7",
+              experimental: false
+            },
+            {
+              version: "3.8",
+              experimental: false
+            },
+            {
+              version: "3.9",
+              experimental: false
+            },
+            {
+              version: "3.10",
+              experimental: false
+            },
+            {
+              version: "3.11",
+              experimental: true
+            },
+          ]
+
         platform:
           [
             {
               os: "macos-latest",
               python-architecture: "x64",
               rust-target: "x86_64-apple-darwin",
-              protoc: "protoc-3.19.0-osx-x86_64.zip"
+              protoc: "protoc-3.19.0-osx-x86_64.zip",
+              experimental: false
             },
             {
               os: "ubuntu-latest",
               python-architecture: "x64",
               rust-target: "x86_64-unknown-linux-gnu",
-              protoc: "protoc-3.19.0-linux-x86_64.zip"
+              protoc: "protoc-3.19.0-linux-x86_64.zip",
+              experimental: false
+
             },
             {
               os: "windows-latest",
               python-architecture: "x64",
               rust-target: "x86_64-pc-windows-msvc",
-              protoc: "protoc-3.19.0-win64.zip"
+              protoc: "protoc-3.19.0-win64.zip",
+              experimental: true
             },
             {
               os: "windows-latest",
               python-architecture: "x86",
               rust-target: "i686-pc-windows-msvc",
-              protoc: "protoc-3.19.0-win32.zip"
+              protoc: "protoc-3.19.0-win32.zip",
+              experimental: true
             },
           ]
     steps:
+      - run: find .
       - name: Checkout sources
         uses: actions/checkout@v2
 
       - name: Setup python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python.version }}
           architecture:  ${{ matrix.platform.python-architecture }}
 
-#      - name: Get pip cache dir
-#        id: pip-cache
-#        run: |
-#          echo "::set-output name=dir::$(pip cache dir)"
-#
-#      - name: pip cache
-#        uses: actions/cache@v2
-#        with:
-#          path: ${{ steps.pip-cache.outputs.dir }}
-#          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-#          restore-keys: |
-#            ${{ runner.os }}-pip-
+      - name: Get pip cache dir
+        id: pip-cache
+        run: |
+          echo "::set-output name=dir::$(pip cache dir)"
+
+      - name: pip cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: pip-${{ matrix.python.version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/requirements.txt') }}
 
       - name: Rust cache
         uses: actions/cache@v2
@@ -126,7 +155,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target/
-          key: cargo-${{ matrix.python-version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/Cargo.toml') }}
+          key: cargo-${{ matrix.python.version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/Cargo.toml') }}
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -143,13 +172,13 @@ jobs:
           command: test
 
       - name: Run rust coverage
-        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python.version == '3.8' && matrix.rust == 'nightly'
         run: |
           curl -LsSf https://github.com/taiki-e/cargo-llvm-cov/releases/latest/download/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz | tar xzf - -C ~/.cargo/bin
           cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
 
       - name: Upload rust coverage
-        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python.version == '3.8' && matrix.rust == 'nightly'
         uses: codecov/codecov-action@v1
         with:
           files: lcov.info
@@ -171,7 +200,7 @@ jobs:
         run: pytest
 
       - name: Run python coverage
-        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python.version == '3.8' && matrix.rust == 'nightly'
         run: |
           site_packages_dir=$(pip show watchfs | grep "Location" | sed 's/Location: //')
           echo "site packages dir: ${site_packages_dir}"
@@ -180,7 +209,7 @@ jobs:
           coverage xml --rcfile=./python/.coveragerc
 
       - name: Upload python coverage
-        if: matrix.platform.os == 'ubuntu-latest' && matrix.python-version == '3.8' && matrix.rust == 'nightly'
+        if: matrix.platform.os == 'ubuntu-latest' && matrix.python.version == '3.8' && matrix.rust == 'nightly'
         uses: codecov/codecov-action@v2
         with:
           fail_ci_if_error: true
