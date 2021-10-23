@@ -198,5 +198,5 @@ jobs:
       CARGO_TERM_VERBOSE: true
       CARGO_BUILD_TARGET: ${{ matrix.platform.rust-target }}
       RUST_BACKTRACE: 1
-      RUSTFLAGS: "-D warnings"
-      RUSTDOCFLAGS: "-D warnings"
+#      RUSTFLAGS: "-D warnings"
+#      RUSTDOCFLAGS: "-D warnings"
