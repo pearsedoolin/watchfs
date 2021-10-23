@@ -59,7 +59,7 @@ jobs:
 #        uses: py-actions/flake8@v1
 
   build_test_deploy:
-    name: ${{ matrix.platform.os }}-${{ matrix.platform.python-architecture }}-python${{ matrix.python.version }}
+    name: ${{ matrix.platform.os }}-${{ matrix.platform.python-architecture }}-python${{ matrix.python.version }}-rust-${{ matrix.rust }}
     runs-on: ${{ matrix.platform.os }}
     continue-on-error: ${{matrix.platform.experimental || matrix.python.experimental }}
 
@@ -88,7 +88,7 @@ jobs:
               experimental: false
             },
             {
-              version: "3.11-alpha",
+              version: "3.11-dev",
               experimental: true
             },
           ]
