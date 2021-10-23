@@ -88,7 +88,7 @@ jobs:
               experimental: false
             },
             {
-              version: "3.11",
+              version: "3.11-alpha",
               experimental: true
             },
           ]
@@ -115,18 +115,17 @@ jobs:
               python-architecture: "x64",
               rust-target: "x86_64-pc-windows-msvc",
               protoc: "protoc-3.19.0-win64.zip",
-              experimental: true
+              experimental: false
             },
             {
               os: "windows-latest",
               python-architecture: "x86",
               rust-target: "i686-pc-windows-msvc",
               protoc: "protoc-3.19.0-win32.zip",
-              experimental: true
+              experimental: false
             },
           ]
     steps:
-      - run: find .
       - name: Checkout sources
         uses: actions/checkout@v2
 
