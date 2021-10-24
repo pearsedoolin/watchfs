@@ -1,46 +1,70 @@
+from __future__ import annotations
 import asyncio
 import pytest
-from watchfs import watch
+from watchfs import prepare_watch
 from watchfs import DebouncedEventTypes, DebouncedEvent
 from pathlib import Path
+from unittest.mock import Mock
 
 
-async def run_watcher(path: Path, stop_event: asyncio.Event) -> DebouncedEvent:
-    async for file_change in watch(path, stop=stop_event):
-        print(file_change)
+async def run_watcher(
+    path: Path | str,
+    ready: asyncio.Event,
+    recursive: bool = True,
+    debounce_millis: int = 100,
+    port=None,
+    stop: asyncio.Event = None,
+) -> DebouncedEvent:
+    async with prepare_watch(
+        path, stop=stop, recursive=recursive, debounce_millis=debounce_millis, port=port
+    ) as watcher:
+        ready.set()
+        async for file_change in watcher:
+            if stop is None:
+                return file_change
     return file_change
 
 
-async def wait_then_stop(stop_event: asyncio.Event):
-    await asyncio.sleep(10)
-    stop_event.set()
-
-
-async def start_tasks():
-    stop_event = asyncio.Event()
-    watcher_task = asyncio.create_task(run_watcher(stop_event))
-    stop_task = asyncio.create_task(wait_then_stop(stop_event))
-    await asyncio.gather(watcher_task)
-    stop_task.cancel()
-    print("done")
-
-
+@pytest.mark.parametrize("port", [None, 50338, 3056])
 @pytest.mark.asyncio
-async def test_async_create(tmp_path):
-    stop_event = asyncio.Event()
-    watch_task = asyncio.create_task(run_watcher(tmp_path, stop_event))
-    await asyncio.sleep(1)
-    test_file_name = "test_file"
-    (tmp_path / test_file_name).touch()
-    await asyncio.sleep(1)
+async def test_create_file_with_stop_event(tmp_path, ready_event, stop_event, port):
+    if port == "busy":
+        port = 5036
+        asyncio.create_task(asyncio.start_server(Mock(), "127.0.0.1", port))
+        await asyncio.sleep(1)
+
+    watch_task = asyncio.create_task(run_watcher(tmp_path, ready_event, port=port, stop=stop_event))
+
+    await ready_event.wait()
+    test_file = tmp_path / "test_file"
+    test_file.touch()
+    await asyncio.sleep(0.5)
 
     stop_event.set()
     file_change = (await asyncio.gather(watch_task))[0]
     assert file_change.type == DebouncedEventTypes.CREATE
-    assert file_change.path == tmp_path / test_file_name
+    assert file_change.path == tmp_path / test_file
     assert file_change.error_message == ""
 
 
-# if __name__ == "__main__":
-#     # Using this instead of asyncio.run(start_tasks()) because of his bug: https://bugs.python.org/issue39232
-#     asyncio.run(start_tasks())
+@pytest.mark.asyncio
+async def test_port_busy(tmp_path, ready_event):
+    port = 5036
+    asyncio.create_task(asyncio.start_server(Mock(), "127.0.0.1", port))
+    await asyncio.sleep(1)
+    watch_task = asyncio.create_task(run_watcher(tmp_path, ready_event, port=port))
+    with pytest.raises(OSError):
+        await asyncio.gather(watch_task)
+
+
+@pytest.mark.asyncio
+async def test_async_create_no_stop_event(tmp_path, ready_event):
+    watch_task = asyncio.create_task(run_watcher(tmp_path, ready_event))
+    await ready_event.wait()
+    test_file = tmp_path / "test_file"
+    test_file.touch()
+
+    file_change = (await asyncio.gather(watch_task))[0]
+    assert file_change.type == DebouncedEventTypes.CREATE
+    assert file_change.path == test_file
+    assert file_change.error_message == ""
