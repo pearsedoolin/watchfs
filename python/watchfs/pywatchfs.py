@@ -122,10 +122,9 @@ class Watcher:
         self.rust_task = asyncio.create_task(self.start_rust())
 
     async def start_rust(self):
-        print("started rust")
         loop = asyncio.get_running_loop()
         with Executor() as pool:
             rust_result = await loop.run_in_executor(
-                pool, watch_path, f"127.0.0.1:{self.port}", str(self._path), self._recursive
+                pool, watch_path, f"127.0.0.1:{self.port}", str(self._path), self._debounce_millis, self._recursive
             )
         return rust_result

@@ -3,11 +3,8 @@ use pyo3::prelude::*;
 
 use notify::{raw_watcher, watcher, DebouncedEvent, RawEvent, RecursiveMode, Watcher};
 use std::net::TcpStream;
-use std::path::{Path, PathBuf};
 use std::sync::mpsc::channel;
-use std::{thread, time};
-
-// use std::path::{Path, PathBuf};
+use std::time;
 
 use prost::Message;
 
@@ -16,7 +13,6 @@ pub mod protobuf {
 }
 use bytes::Bytes;
 
-use pyo3::ffi::Py_FatalError;
 use std::io::{Read, Write};
 
 fn u16_to_array_of_u8(n: u16) -> [u8; 2] {
@@ -62,9 +58,12 @@ fn check_for_stop(stream: &mut TcpStream) -> bool {
 
 /// Formats the sum of two numbers as string.
 #[pyfunction]
-fn watch_path(address: String, path: String, recursive: bool) -> PyResult<String> {
-    let delay_millis = 100;
-    println!("{}, {}, {}, {}", address, path, recursive, delay_millis);
+fn watch_path(
+    address: String,
+    path: String,
+    debounce_millis: u64,
+    recursive: bool,
+) -> PyResult<String> {
     let mut stream = TcpStream::connect(&address)?;
     stream.set_nonblocking(true).unwrap();
     let mut stop = false;
@@ -75,7 +74,7 @@ fn watch_path(address: String, path: String, recursive: bool) -> PyResult<String
         true => RecursiveMode::Recursive,
         false => RecursiveMode::NonRecursive,
     };
-    let mut watcher = watcher(tx, time::Duration::from_millis(delay_millis)).unwrap();
+    let mut watcher = watcher(tx, time::Duration::from_millis(debounce_millis)).unwrap();
     match watcher.watch(path, recursive) {
         Ok(_t) => {
             while stop == false {
@@ -140,7 +139,6 @@ fn watch_path(address: String, path: String, recursive: bool) -> PyResult<String
                                 debounced_event.action =
                                     protobuf::debounced_event::Action::Error as i32;
                             }
-                            _ => panic!("Unknown event"),
                         }
                         send_file_change(&mut stream, &debounced_event);
                     }
