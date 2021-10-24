@@ -50,13 +50,23 @@ jobs:
           options: "--check --verbose"
           src: "./python/watchfs"
 
-  flake8-lint:
+  flake8:
+    name: Flake8
     runs-on: ubuntu-latest
-    name: Lint
     steps:
       - uses: actions/checkout@v2
       - name: flake8 Lint
         uses: py-actions/flake8@v1
+
+  mypy:
+    name: Mypy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: install mypy
+        run: pip install mypy
+      - name: run mypy
+        run: mypy . --install-types --non-interactive
 
   build_test_deploy:
     name: ${{ matrix.platform.os }}-${{ matrix.platform.python-architecture }}-python${{ matrix.python.version }}-rust-${{ matrix.rust }}
