@@ -41,7 +41,7 @@ def run_protoc(url):
     )
     stdout, stderr = proc.communicate()
     if proc.returncode != 0:
-        raise Exception(f"protoc failed. stdout: {stdout}  stderr: {stderr}")
+        raise Exception(f"protoc failed. stdout: {stdout=}  stderr: {stderr}")
 
 
 if __name__ == "__main__":
