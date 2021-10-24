@@ -1,8 +1,5 @@
 import asyncio
-from typing import List
-
 import pytest
-
 from watchfs import watch
 from watchfs import DebouncedEventTypes, DebouncedEvent
 from pathlib import Path

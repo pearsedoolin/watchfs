@@ -102,7 +102,7 @@ class watch:
                     self.port = random.randint(1024, 65535)
                     await asyncio.start_server(self.handle_connection, "127.0.0.1", self.port)
                     break
-                except OSError as e:
+                except OSError:
                     pass
         else:
             await asyncio.start_server(self.handle_connection, "127.0.0.1", self.port)
