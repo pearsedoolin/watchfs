@@ -12,8 +12,3 @@ def tmp_path(tmpdir):
 @pytest.fixture()
 def ready_event():
     return asyncio.Event()
-
-
-@pytest.fixture()
-def stop_event():
-    return asyncio.Event()
