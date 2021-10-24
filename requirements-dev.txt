@@ -4,3 +4,4 @@ flake8
 maturin
 requests
 twine
+pygments==2.7.4 # fixes vulnerability introduced by twine, and caught by snyk

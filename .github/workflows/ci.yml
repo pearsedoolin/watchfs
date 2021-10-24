@@ -144,7 +144,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: pip-${{ matrix.python.version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/requirements.txt') }}
+          key: pip-${{ matrix.platform.os }}-${{ matrix.platform.python-architecture }}-python${{ matrix.python.version }}-${{ matrix.rust }}}-${{ hashFiles('**/requirements.txt') }}
 
       - name: Rust cache
         uses: actions/cache@v2
@@ -154,8 +154,8 @@ jobs:
             ~/.cargo/registry/index/
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
-            target/
-          key: cargo-${{ matrix.python.version }}-${{ matrix.platform.python-architecture }}-${{ matrix.platform.os }}-${{ hashFiles('**/Cargo.toml') }}
+#            target/
+          key: cargo-${{ matrix.platform.os }}-${{ matrix.platform.python-architecture }}-python${{ matrix.python.version }}-${{ matrix.rust }}${{ hashFiles('**/Cargo.toml') }}
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
