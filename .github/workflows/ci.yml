@@ -10,53 +10,53 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-#  rustfmt:
-#    name: Rustfmt
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: actions-rs/toolchain@v1
-#        with:
-#          toolchain: stable
-#          override: true
-#          components: rustfmt
-#      - uses: actions-rs/cargo@v1
-#        with:
-#          command: fmt
-#          args: --all -- --check
-#
-#  clippy:
-#    name: Clippy
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: actions-rs/toolchain@v1
-#        with:
-#          toolchain: stable
-#          override: true
-#          components: clippy
-#      - uses: actions-rs/clippy-check@v1
-#        with:
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          args: -- -D warnings
-#
-#  black:
-#    name: Black
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: psf/black@stable
-#        with:
-#          options: "--check --verbose"
-#          src: "./python/watchfs"
-#
-#  flake8-lint:
-#    runs-on: ubuntu-latest
-#    name: Lint
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: flake8 Lint
-#        uses: py-actions/flake8@v1
+  rustfmt:
+    name: Rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: clippy
+      - uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: -- -D warnings
+
+  black:
+    name: Black
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
+        with:
+          options: "--check --verbose"
+          src: "./python/watchfs"
+
+  flake8-lint:
+    runs-on: ubuntu-latest
+    name: Lint
+    steps:
+      - uses: actions/checkout@v2
+      - name: flake8 Lint
+        uses: py-actions/flake8@v1
 
   build_test_deploy:
     name: ${{ matrix.platform.os }}-${{ matrix.platform.python-architecture }}-python${{ matrix.python.version }}-rust-${{ matrix.rust }}
