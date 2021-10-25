@@ -8,6 +8,8 @@ from unittest.mock import Mock
 import stat
 import platform
 
+sleep_after_event = 2
+
 
 async def run_watcher(
     path: Path | str,
@@ -79,7 +81,7 @@ async def test_write(tmp_path, ready_event, write_mode, debounce_millis):
     with test_file.open(write_mode) as file_handle:
         file_handle.write("test")
 
-    await asyncio.sleep(1)
+    await asyncio.sleep(sleep_after_event)
     stop_event.set()
 
     file_changes = (await asyncio.gather(watch_task))[0]
@@ -104,7 +106,7 @@ async def test_chmod(tmp_path, ready_event):
     mode = test_file.stat().st_mode
     test_file.chmod(mode ^ stat.S_IWRITE)
 
-    await asyncio.sleep(1)
+    await asyncio.sleep(sleep_after_event)
     stop_event.set()
 
     file_changes = (await asyncio.gather(watch_task))[0]
@@ -126,7 +128,7 @@ async def test_remove(tmp_path, ready_event):
 
     test_file.unlink()
 
-    await asyncio.sleep(1)
+    await asyncio.sleep(sleep_after_event)
     stop_event.set()
 
     file_changes = (await asyncio.gather(watch_task))[0]
@@ -142,9 +144,9 @@ async def test_remove(tmp_path, ready_event):
 @pytest.mark.parametrize(
     "new_file, expected_event_types",
     [
-        ("test_file", [DebouncedEventTypes.NOTICEREMOVE, DebouncedEventTypes.REMOVE, DebouncedEventTypes.CREATE]),
+        ("test_filez", [DebouncedEventTypes.NOTICEREMOVE, DebouncedEventTypes.REMOVE, DebouncedEventTypes.CREATE]),
         (
-            "test/test_file2",
+            "test/test_filez",
             [
                 DebouncedEventTypes.NOTICEREMOVE,
                 DebouncedEventTypes.NOTICEWRITE,
@@ -153,7 +155,7 @@ async def test_remove(tmp_path, ready_event):
             ],
         ),
         (
-            "test/test/test_file",
+            "test/test/test_filez",
             [
                 DebouncedEventTypes.NOTICEREMOVE,
                 DebouncedEventTypes.NOTICEWRITE,
@@ -180,7 +182,7 @@ async def test_rename(tmp_path, ready_event, new_file, expected_event_types):
 
     test_file.rename(new_path)
 
-    await asyncio.sleep(2)
+    await asyncio.sleep(sleep_after_event)
     stop_event.set()
 
     file_changes = (await asyncio.gather(watch_task))[0]
