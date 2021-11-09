@@ -22,3 +22,5 @@ venv
 *~
 build_scripts/protoc
 build_scripts/protoc.zip
+*.so
+.vscode
