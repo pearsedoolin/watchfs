@@ -92,32 +92,30 @@ fn watchfs(_py: Python, m: &PyModule) -> PyResult<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
     use std::fs::File;
-    use std::io::{self, Write};
-    use std::path::PathBuf;
-    use std::{thread, time};
+    use std::net::TcpListener;
+    use std::thread;
     use tempdir::TempDir;
 
-    const arr1: [u8; 2] = [0, 5];
-    const arr2: [u8; 2] = [1, 0];
-    const arr3: [u8; 2] = [2, 13];
-    const val1: u16 = 5;
-    const val2: u16 = u16::pow(2, 8);
-    const val3: u16 = u16::pow(2, 9) + 13;
+    const ARR1: [u8; 2] = [0, 5];
+    const ARR2: [u8; 2] = [1, 0];
+    const ARR3: [u8; 2] = [2, 13];
+    const VAL1: u16 = 5;
+    const VAL2: u16 = u16::pow(2, 8);
+    const VAL3: u16 = u16::pow(2, 9) + 13;
 
     #[test]
     fn test_u16_to_array_of_u8() {
-        assert_eq!(u16_to_array_of_u8(val1), arr1);
-        assert_eq!(u16_to_array_of_u8(val2), arr2);
-        assert_eq!(u16_to_array_of_u8(val3), arr3);
+        assert_eq!(u16_to_array_of_u8(VAL1), ARR1);
+        assert_eq!(u16_to_array_of_u8(VAL2), ARR2);
+        assert_eq!(u16_to_array_of_u8(VAL3), ARR3);
     }
 
     #[test]
     fn test_u8_array_to_u16() {
-        assert_eq!(u8_array_to_u16(&arr1), val1);
-        assert_eq!(u8_array_to_u16(&arr2), val2);
-        assert_eq!(u8_array_to_u16(&arr3), val3);
+        assert_eq!(u8_array_to_u16(&ARR1), VAL1);
+        assert_eq!(u8_array_to_u16(&ARR2), VAL2);
+        assert_eq!(u8_array_to_u16(&ARR3), VAL3);
     }
 
     #[test]
@@ -170,7 +168,7 @@ mod tests {
                 let ready = receive_str(&mut stream);
                 assert_eq!(ready, "ready");
 
-                let mut f = File::create(file_path_str).unwrap();
+                let _f = File::create(file_path_str).unwrap();
 
                 let file_change_str = receive_str(&mut stream);
                 assert!(file_change_str
