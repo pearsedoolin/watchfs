@@ -172,7 +172,7 @@ mod tests {
                 let _f = File::create(file_path_str).unwrap();
 
                 let file_change_str = receive_str(&mut stream);
-                let re = Regex::new(r#"^\{"type":\{"create":\{"kind":"(any|file)"\}\},"paths":\[".*"\],"attrs":\{\}\}$"#).unwrap(); //.*"]"$
+                let re = Regex::new(r#"^\{"type":\{"create":"#).unwrap(); //\{"kind":"(any|file)"\}\},"paths":\[".*"\],"attrs":\{\}\}$"#).unwrap(); //.*"]"$
                 assert!(re.is_match(&file_change_str));
                 send_str(&mut stream, "stop");
                 watch.join().unwrap();
