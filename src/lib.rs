@@ -92,6 +92,7 @@ fn watchfs(_py: Python, m: &PyModule) -> PyResult<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use regex::Regex;
     use std::fs::File;
     use std::net::TcpListener;
     use std::thread;
@@ -171,8 +172,8 @@ mod tests {
                 let _f = File::create(file_path_str).unwrap();
 
                 let file_change_str = receive_str(&mut stream);
-                assert!(file_change_str
-                    .starts_with("{\"type\":{\"create\":{\"kind\":\"file\"}},\"paths\":["));
+                let re = Regex::new(r#"^\{"type":\{"create":\{"kind":"(any|file)"\}\},"paths":\[".*"\],"attrs":\{\}\}$"#).unwrap(); //.*"]"$
+                assert!(re.is_match(&file_change_str));
                 send_str(&mut stream, "stop");
                 watch.join().unwrap();
             }
