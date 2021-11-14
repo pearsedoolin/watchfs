@@ -58,15 +58,15 @@ jobs:
       - name: flake8 Lint
         uses: py-actions/flake8@v1
 
-  mypy:
-    name: Mypy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: install mypy
-        run: pip install mypy
-      - name: run mypy
-        run: mypy . --install-types --non-interactive
+  # mypy:
+  #   name: Mypy
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: install mypy
+  #       run: pip install mypy
+  #     - name: run mypy
+  #       run: mypy . --install-types --non-interactive
 
   build_test_deploy:
     name: ${{ matrix.platform.os }}-${{ matrix.platform.python-architecture }}-python${{ matrix.python.version }}-rust-${{ matrix.rust }}
@@ -77,7 +77,7 @@ jobs:
       fail-fast: false # If one platform fails, allow the rest to keep testing.
 
       matrix:
-        rust: [ "stable", "nightly" ]
+        rust: [ "stable" ] # , "nightly" ]
         # 3.6 does not allow asyncio.createtask
         python:
           [
@@ -197,10 +197,6 @@ jobs:
         run: |
           pip install -r requirements-test.txt
           pip install -r requirements-dev.txt
-
-      - name: Build proto python file
-        run: python build_scripts/run_protoc.py --url="https://github.com/protocolbuffers/protobuf/releases/download/v3.19.0/${{ matrix.platform.protoc }}"
-
 
       - name: Get python path
         id: python-path
