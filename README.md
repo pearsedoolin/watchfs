@@ -9,3 +9,16 @@
 
 A python file system watcher that uses the rust [notify](https://docs.rs/notify/4.0.17/notify/) crate.
 
+## Example
+
+```python
+import asyncio
+import watchfs
+
+async def my_async_file_watcher():
+    async with watchfs.start_watch("path/to/watch") as watcher:
+        async for file_change in watcher:
+            print(file_change)
+
+asyncio.run(my_async_file_watcher)
+```

@@ -5,6 +5,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    branches: [ main ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -75,34 +77,8 @@ jobs:
 
     strategy:
       fail-fast: false # If one platform fails, allow the rest to keep testing.
-
       matrix:
-        rust: [ "stable" ] # , "nightly" ]
-        # 3.6 does not allow asyncio.createtask
-        python:
-          [
-            {
-              version: "3.7",
-              experimental: false
-            },
-            {
-              version: "3.8",
-              experimental: false
-            },
-            {
-              version: "3.9",
-              experimental: false
-            },
-            {
-              version: "3.10",
-              experimental: false
-            },
-#            {
-#              version: "3.11-dev",
-#              experimental: true
-#            },
-          ]
-
+        rust: [ "nightly" ] # , "stable" ]
         platform:
           [
             {
@@ -135,6 +111,31 @@ jobs:
               experimental: false
             },
           ]
+        # 3.6 does not allow asyncio.createtask
+        python:
+          [
+            {
+              version: "3.7",
+              experimental: false
+            },
+            {
+              version: "3.8",
+              experimental: false
+            },
+            {
+              version: "3.9",
+              experimental: false
+            },
+            {
+              version: "3.10",
+              experimental: false
+            },
+#            {
+#              version: "3.11-dev",
+#              experimental: true
+#            },
+          ]
+
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -227,9 +228,11 @@ jobs:
           fail_ci_if_error: true
 
       - name: Run twine check
+        if: github.ref == 'refs/heads/main'
         run: twine check target/wheels/*
 
       - name: Upload to pypi
+        if: github.ref == 'refs/heads/main'
         run: twine upload  -r testpypi target/wheels/*.whl --verbose --skip-existing
         env:
           TWINE_USERNAME: __token__

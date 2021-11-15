@@ -41,7 +41,7 @@ pub fn start_watch(
     mut stream: TcpStream,
     path: &str,
     recursive: bool,
-) -> notify::RecommendedWatcher {
+) -> Result<notify::RecommendedWatcher> {
     let mut watch = notify::recommended_watcher(move |res| match res {
         Ok(event) => {
             let serialized = serde_json::to_string(&event).unwrap();
@@ -56,7 +56,7 @@ pub fn start_watch(
         false => RecursiveMode::NonRecursive,
     };
     watch.watch(Path::new(path), recursive).unwrap();
-    watch
+    Ok(watch)
 }
 
 pub fn watch_path_rs(address: &str, path: &str, recursive: bool) -> Result<String> {
@@ -74,11 +74,10 @@ pub fn watch_path_rs(address: &str, path: &str, recursive: bool) -> Result<Strin
 }
 
 #[pyfunction]
-pub fn watch_path(address: String, path: String, recursive: bool) -> PyResult<String> {
-    println!("Running Rust!");
+pub fn watch_path(address: String, path: String, recursive: bool) -> PyResult<()> {
     // Ok("Done rust".to_string())
     match watch_path_rs(&address, &path, recursive) {
-        Ok(message) => Ok(message),
+        Ok(_message) => Ok(()),
         Err(error) => Err(PyException::new_err(error.to_string())),
     }
 }
@@ -181,4 +180,12 @@ mod tests {
         }
         dir.close().unwrap();
     }
+
+    // #[test]
+    // fn test_path_does_not_exist() {
+    //     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    //     let addr = listener.local_addr().unwrap().to_string();
+    //     let watch = watch_path_rs(&addr, "does_not_exist", true).unwrap();
+    //     assert!(true);
+    // }
 }
